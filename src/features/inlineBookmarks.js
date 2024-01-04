@@ -1,7 +1,7 @@
 'use strict';
 /** 
  * @author github.com/tintinweb
- *  
+ * @author github.com/jsbinette
  * 
  * 
  * */
@@ -386,6 +386,15 @@ class InlineBookmarksCtrl {
     saveToWorkspace() {
         if (!this._isWorkspaceAvailable()) return; //cannot save
         this.context.workspaceState.update("bookmarks.object", JSON.stringify(this.bookmarks));
+        let workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
+        if (workspaceFolder) { 
+            fs.writeFile(workspaceFolder + '/.vscode/bookmarks.json', JSON.stringify(this.bookmarks), (err) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                };
+            });
+        }
     }
 
     loadFromWorkspace() {

@@ -1,5 +1,10 @@
 # Change Log
 
+
+## 0.1.1
+- change of name to reflect the fork from the original project
+- added a json dump of the bookmarks to .vscode/bookmarks.json
+
 ## 0.1.0
 - fix: VSCode 1.72.0 introduced an incompatibility raising the error: 'Extension tintinweb.vscode-inline-bookmarks has provided an invalid tree item.' - #56 #57
 - new: Optionally, hide items from the bookmarks view that are excluded by a downstream `.gitignore` file (requires reload)

@@ -1,3 +1,10 @@
+# Fork Notes
+
+This is a fork of the inline-bookmarks extension by [tintinweb](https://github.com/tintinweb) with the following changes:
+- Added a jsondump of the bookmarks on update in .vscode
+- This is still a very experimental fork that might be used as a writer extension for work with gpt.  We'll see.
+
+
 [<img width="200" alt="get in touch with Consensys Diligence" src="https://user-images.githubusercontent.com/2865694/56826101-91dcf380-685b-11e9-937c-af49c2510aa0.png">](https://diligence.consensys.net)<br/>
 <sup>
 [[  🌐  ](https://diligence.consensys.net)  [  📩  ](mailto:diligence@consensys.net)  [  🔥  ](https://consensys.github.io/diligence/)]

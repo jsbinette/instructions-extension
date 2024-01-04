@@ -1,8 +1,8 @@
 {
-    "name": "vscode-inline-bookmarks",
+    "name": "instructions-extension",
     "displayName": "Inline Bookmarks",
     "description": "Customizable Inline Bookmarks",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "license": "GPLv3",
     "keywords": [
         "bookmark",
@@ -26,11 +26,11 @@
         "Other"
     ],
     "bugs": {
-        "url": "https://github.com/tintinweb/vscode-inline-bookmarks/issues"
+        "url": "https://github.com/jsbinette/instructions-extension/issues"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/tintinweb/vscode-inline-bookmarks"
+        "url": "https://github.com/jsbinette/instructions-extension"
     },
     "activationEvents": [
         "*",
