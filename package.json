@@ -248,7 +248,7 @@
                 "instructions.default.words.red": {
                     "category": "trigger words",
                     "type": "string",
-                    "default": "@out",
+                    "default": "@out[\\s]",
                     "markdownDescription": "A comma-separated list of tags/trigger words (regex accepted) to highlight `red`."
                 },
                 "instructions.default.words.green": {
@@ -323,7 +323,10 @@
                         "**/_output/**",
                         "**/*.min.*",
                         "**/*.map",
-                        "**/.next/**"
+                        "**/.next/**",
+                        "package-lock.json",
+                        "package.json",
+                        "**/*.visx"
                     ],
                     "description": "Glob pattern that defines files and folders to exclude while listing annotations.",
                     "items": {

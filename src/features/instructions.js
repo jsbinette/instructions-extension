@@ -455,7 +455,7 @@ class instructionsCtrl {
                             }
 
                             let textBeforeTag = fileContents.substring(tag.tagLineStart, tag.tagStart)
-                            let textAfterTag = fileContents.substring(tag.tagStart + tag.tag.length, tagEnd)
+                            let textAfterTag = fileContents.substring(tag.tagStart + tag.tag.length + 1, tagEnd)
 
                             if (textAfterTag !== '' && tag.tag !== '@out') {
                                 output.push(textBeforeTag + textAfterTag)
