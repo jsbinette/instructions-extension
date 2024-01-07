@@ -322,13 +322,13 @@ class instructionsCtrl {
 
     _getDecorationDefaultStyle(color) {
         return this._getDecorationStyle({
-            "gutterIconPath": this._getBookmarkDataUri(color),
+            "gutterIconPath": this._getBookmarkDataUri(color), 
             "overviewRulerColor": color + "B0",   // this is safe/suitable for the defaults only.  Custom ruler color is handled below.
             "light": {
                 "fontWeight": "bold"
             },
             "dark": {
-                "color": this._getBookmarkDataUri(color)
+                "color": color
             }
         })
     }
