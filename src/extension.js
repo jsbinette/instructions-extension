@@ -1,14 +1,14 @@
 'use strict';
 /** 
  * @author github.com/tintinweb
- *  
+ * @author github.com/jsbinette
  * 
  * 
  * */
 /** imports */
 const vscode = require('vscode');
 const settings = require('./settings');
-const {InlineBookmarksCtrl, InlineBookmarkTreeDataProvider} = require('./features/inlineBookmarks');
+const {instructionsCtrl, InlineBookmarkTreeDataProvider} = require('./features/instructions');
 const GitIgnore = require('./features/gitignore');
 
 
@@ -72,25 +72,25 @@ function editorFindNearestBookmark(documentUri, treeDataProvider, anchor, overri
 
 
 function onActivate(context) {
-    const auditTags = new InlineBookmarksCtrl(context);
+    const auditTags = new instructionsCtrl(context);
     const treeDataProvider = new InlineBookmarkTreeDataProvider(auditTags);
 
     var activeEditor = vscode.window.activeTextEditor;
 
     /** register views */
-    const treeView = vscode.window.createTreeView('inlineBookmarksExplorer', { treeDataProvider: treeDataProvider });
+    const treeView = vscode.window.createTreeView('instructionsExplorer', { treeDataProvider: treeDataProvider });
     /*
     context.subscriptions.push(treeView);
     */
     /*
     context.subscriptions.push(
-        vscode.window.registerTreeDataProvider("inlineBookmarksExplorer", treeDataProvider)
+        vscode.window.registerTreeDataProvider("instructionsExplorer", treeDataProvider)
     );
     */
     
     /** register commands */
     context.subscriptions.push(
-        vscode.commands.registerCommand("inlineBookmarks.jumpToRange", (documentUri, range) => {
+        vscode.commands.registerCommand("instructions.jumpToRange", (documentUri, range) => {
             vscode.workspace.openTextDocument(documentUri).then(doc => {
                 vscode.window.showTextDocument(doc).then(editor => {
                     editorJumptoRange(range, editor);
@@ -99,25 +99,25 @@ function onActivate(context) {
         })
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand("inlineBookmarks.refresh", () => {
+        vscode.commands.registerCommand("instructions.refresh", () => {
             auditTags.commands.refresh();
             treeDataProvider.refresh();
         })
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand("inlineBookmarks.toggleShowVisibleFilesOnly", () => {
+        vscode.commands.registerCommand("instructions.toggleShowVisibleFilesOnly", () => {
             settings.extensionConfig().update("view.showVisibleFilesOnly", !settings.extensionConfig().view.showVisibleFilesOnly);
             auditTags.commands.refresh();
             treeDataProvider.refresh();
         })
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand("inlineBookmarks.toggleViewKeepFilesExpanded", () => {
+        vscode.commands.registerCommand("instructions.toggleViewKeepFilesExpanded", () => {
             settings.extensionConfig().update("view.expanded", !settings.extensionConfig().view.expanded);
         })
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand("inlineBookmarks.jumpToNext", () => {
+        vscode.commands.registerCommand("instructions.jumpToNext", () => {
             let element;
             const lineMode = settings.extensionConfig().view.lineMode;
 
@@ -150,7 +150,7 @@ function onActivate(context) {
         })
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand("inlineBookmarks.jumpToPrevious", () => {
+        vscode.commands.registerCommand("instructions.jumpToPrevious", () => {
             let element;
             const lineMode = settings.extensionConfig().view.lineMode;
 
@@ -183,7 +183,7 @@ function onActivate(context) {
         })
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand("inlineBookmarks.setTreeViewFilterWords", (words) => {
+        vscode.commands.registerCommand("instructions.setTreeViewFilterWords", (words) => {
             if(!words || !words.length){
                 //show dialog?
                 let options = {
@@ -207,38 +207,38 @@ function onActivate(context) {
         })
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand("inlineBookmarks.debug.state.reset", () => {
+        vscode.commands.registerCommand("instructions.debug.state.reset", () => {
             auditTags.resetWorkspace();
             auditTags.loadFromWorkspace();
             treeDataProvider.refresh();
         })
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand("inlineBookmarks.showSelectBookmark", () => {
+        vscode.commands.registerCommand("instructions.showSelectBookmark", () => {
             auditTags.commands.showSelectBookmark();
         })
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand("inlineBookmarks.showSelectVisibleBookmark", () => {
+        vscode.commands.registerCommand("instructions.showSelectVisibleBookmark", () => {
             auditTags.commands.showSelectVisibleBookmark();
         })
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand("inlineBookmarks.listBookmarks", () => {
+        vscode.commands.registerCommand("instructions.listBookmarks", () => {
             auditTags.commands.showListBookmarks();
         })
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand("inlineBookmarks.listVisibleBookmarks", () => {
+        vscode.commands.registerCommand("instructions.listVisibleBookmarks", () => {
             auditTags.commands.showListVisibleBookmarks();
         })
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand("inlineBookmarks.scanWorkspace", () => {
+        vscode.commands.registerCommand("instructions.scanWorkspace", () => {
             auditTags.commands.scanWorkspaceBookmarks();
         })
     );

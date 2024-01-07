@@ -12,6 +12,7 @@ const path = require("path");
 const crypto = require("crypto");
 const settings = require('../settings');
 const os = require("os");
+const { minimatch } = require('minimatch')
 
 class Commands {
     constructor(controller) {
@@ -33,7 +34,7 @@ class Commands {
             let resource = vscode.Uri.parse(uri).fsPath;
             let fname = path.parse(resource).base;
 
-            if(filter && !filter(resource)){
+            if (filter && !filter(resource)) {
                 return;
             }
 
@@ -50,7 +51,7 @@ class Commands {
         }, this);
 
         vscode.window.showQuickPick(entries, { placeHolder: placeHolder || 'Select bookmarks' }).then(item => {
-            vscode.commands.executeCommand("inlineBookmarks.jumpToRange", item.target.uri, item.target.range);
+            vscode.commands.executeCommand("instructions.jumpToRange", item.target.uri, item.target.range);
         });
     }
 
@@ -62,7 +63,7 @@ class Commands {
     showListBookmarks(filter) {
 
         if (!vscode.window.outputChannel) {
-            vscode.window.outputChannel = vscode.window.createOutputChannel('inlineBookmarks');
+            vscode.window.outputChannel = vscode.window.createOutputChannel('instructions');
         }
 
         if (!vscode.window.outputChannel) return;
@@ -73,7 +74,7 @@ class Commands {
             let resource = vscode.Uri.parse(uri).fsPath;
             let fname = path.parse(resource).base;
 
-            if(filter && !filter(resource)){
+            if (filter && !filter(resource)) {
                 return;
             }
 
@@ -118,38 +119,28 @@ class Commands {
 
     scanWorkspaceBookmarks() {
 
-        function arrayToSearchGlobPattern(config) {
-            return Array.isArray(config) ?
-                '{' + config.join(',') + '}'
-                : (typeof config == 'string' ? config : '');
-        }
-
-        var includePattern = arrayToSearchGlobPattern(settings.extensionConfig().search.includes) || '{**/*}';
-        var excludePattern = arrayToSearchGlobPattern(settings.extensionConfig().search.excludes);
-        var limit = settings.extensionConfig().search.maxFiles;
-
         let that = this;
-    
-        vscode.workspace.findFiles(includePattern, excludePattern, limit).then(function (files) {
-    
+
+        vscode.workspace.findFiles(this.includePattern, this.excludePattern, this.maxFilesLimit).then(function (files) {
+
             if (!files || files.length === 0) {
-                console.log('No files found' );
+                console.log('No files found');
                 return;
             }
-    
+
             var totalFiles = files.length;
 
             for (var i = 0; i < totalFiles; i++) {
-    
+
                 vscode.workspace.openTextDocument(files[i]).then((document) => {
                     that.controller.updateBookmarks(document);
                     //NOP
                 }, (err) => {
                     console.error(err);
                 });
-    
+
             }
-            
+
         }, (err) => {
             console.error(err);
         });
@@ -157,7 +148,7 @@ class Commands {
 
 }
 
-class InlineBookmarksCtrl {
+class instructionsCtrl {
 
     constructor(context) {
         this.context = context;
@@ -167,6 +158,19 @@ class InlineBookmarksCtrl {
         this.commands = new Commands(this);
 
         this.bookmarks = {};  // {file: {bookmark}}
+
+
+        function arrayToSearchGlobPattern(config) {
+            return Array.isArray(config) ?
+                '{' + config.join(',') + '}'
+                : (typeof config == 'string' ? config : '');
+        }
+
+        this.includePattern = arrayToSearchGlobPattern(settings.extensionConfig().search.includes) || '{**/*}';
+        this.excludePattern = arrayToSearchGlobPattern(settings.extensionConfig().search.excludes);
+        this.maxFilesLimit = settings.extensionConfig().search.maxFiles;
+
+
         this.loadFromWorkspace();
     }
 
@@ -178,7 +182,7 @@ class InlineBookmarksCtrl {
 
     async decorate(editor) {
         if (!editor || !editor.document /*|| editor.document.fileName.startsWith("extension-output-")*/) return; //decorate list of inline comments
-
+        if (minimatch(editor.document.fileName, this.excludePattern)) return;
         this._clearBookmarksOfFile(editor.document);
 
         if (this._extensionIsBlacklisted(editor.document.fileName)) return;
@@ -215,6 +219,7 @@ class InlineBookmarksCtrl {
     _extensionIsBlacklisted(fileName) {
         let ignoreList = settings.extensionConfig().exceptions.file.extensions.ignore;
         if (!ignoreList || ignoreList.length === 0) return false;
+        if (minimatch(fileName, this.excludePattern)) return false;
         return this._commaSeparatedStringToUniqueList(ignoreList).some(ext => fileName.endsWith(ext.trim()));
     }
 
@@ -318,27 +323,27 @@ class InlineBookmarksCtrl {
     _getDecorationDefaultStyle(color) {
         return this._getDecorationStyle({
             "gutterIconPath": this._getBookmarkDataUri(color),
-            "overviewRulerColor": color+"B0",   // this is safe/suitable for the defaults only.  Custom ruler color is handled below.
+            "overviewRulerColor": color + "B0",   // this is safe/suitable for the defaults only.  Custom ruler color is handled below.
             "light": {
                 "fontWeight": "bold"
             },
             "dark": {
-                "color": "Chocolate"
+                "color": this._getBookmarkDataUri(color)
             }
         })
     }
 
     _reLoadDecorations() {
-        const blue      = '#157EFB';
-        const green     = '#2FCE7C';
-        const purple    = '#C679E0';
-        const red       = '#F44336';
-        let styles      = {
-            "default":  this._getDecorationDefaultStyle(blue),
-            "red":      this._getDecorationDefaultStyle(red),
-            "blue":     this._getDecorationDefaultStyle(blue),
-            "green":    this._getDecorationDefaultStyle(green),
-            "purple":   this._getDecorationDefaultStyle(purple)
+        const blue = '#1874e2';
+        const green = '#10a37f';
+        const purple = '#C679E0';
+        const red = '#F44336';
+        let styles = {
+            "default": this._getDecorationDefaultStyle(blue),
+            "red": this._getDecorationDefaultStyle(red),
+            "blue": this._getDecorationDefaultStyle(blue),
+            "green": this._getDecorationDefaultStyle(green),
+            "purple": this._getDecorationDefaultStyle(purple)
         };
 
         let customStyles = settings.extensionConfig().expert.custom.styles;
@@ -383,12 +388,87 @@ class InlineBookmarksCtrl {
         this.context.workspaceState.update("bookmarks.object", "{}");
     }
 
-    saveToWorkspace() {
+    async saveToWorkspace() {
         if (!this._isWorkspaceAvailable()) return; //cannot save
         this.context.workspaceState.update("bookmarks.object", JSON.stringify(this.bookmarks));
         let workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
-        if (workspaceFolder) { 
+        if (workspaceFolder) {
             fs.writeFile(workspaceFolder + '/.vscode/bookmarks.json', JSON.stringify(this.bookmarks), (err) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                };
+            });
+            //temporary spot for this
+            function transformBookmarks(bookmarks) {
+                let transformedData = {}
+
+                for (const [filePath, tags] of Object.entries(bookmarks)) {
+                    let fileData = []
+                    for (const [tag, entries] of Object.entries(tags)) {
+                        for (const entry of entries) {
+                            let tagTextSplit = entry.text.split(' ', 1)
+                            fileData.push({
+                                line: entry.range.c.line,
+                                startCharacter: entry.range.c.character,
+                                endCharacter: entry.range.e.character,
+                                tag: tagTextSplit[0].trim(),
+                                tagText: tagTextSplit.length > 1 ? tagTextSplit[1].substring(0, 50) : ''
+                            })
+                        }
+                    }
+
+                    fileData.sort((a, b) => a.line - b.line || a.startCharacter - b.startCharacter)
+                    transformedData[filePath] = fileData
+                }
+
+                return transformedData
+            }
+
+            async function processTags(inputJson) {
+                let output = []
+                for (const filePath of Object.keys(inputJson)) {
+                    const sortedTags = inputJson[filePath]
+                    try {
+                        const file = await vscode.workspace.openTextDocument(vscode.Uri.parse(filePath))
+                        let fileContents = file.getText()
+                        let firstTag = sortedTags[0]
+                        firstTag.tagStart = fileContents.indexOf(firstTag.tag)
+                        firstTag.tagLineStart = firstTag.tagStart - firstTag.startCharacter
+
+                        for (let i = 0; i < sortedTags.length; i++) {
+                            const tag = sortedTags[i]
+                            let tagEnd
+
+                            if (i + 1 < sortedTags.length) {
+                                const nextTag = sortedTags[i + 1]
+                                nextTag.tagStart = fileContents.indexOf(nextTag.tag, tag.tagStart + tag.tag.length)
+
+                                if (nextTag.startCharacter !== 0 && tag.line !== nextTag.line) {
+                                    nextTag.tagLineStart = nextTag.tagStart - nextTag.startCharacter
+                                } else {
+                                    nextTag.tagLineStart = nextTag.tagStart
+                                }
+                                tagEnd = nextTag.tagLineStart
+                            } else {
+                                tagEnd = fileContents.length
+                            }
+
+                            let textBeforeTag = fileContents.substring(tag.tagLineStart, tag.tagStart)
+                            let textAfterTag = fileContents.substring(tag.tagStart + tag.tag.length, tagEnd)
+
+                            if (textAfterTag !== '' && tag.tag !== '@out') {
+                                output.push(textBeforeTag + textAfterTag)
+                            }
+                        }
+                    } catch (error) {
+                        console.error(error)
+                    }
+                }
+                return output
+            }
+            let output = await processTags(transformBookmarks(this.bookmarks));
+            fs.writeFile(workspaceFolder + '/.vscode/instructions.md', output.join(''), (err) => {
                 if (err) {
                     console.error(err);
                     return;
@@ -403,7 +483,8 @@ class InlineBookmarksCtrl {
 
         //remove all non existing files
         Object.keys(this.bookmarks).forEach(filepath => {
-            if (!fs.existsSync(vscode.Uri.parse(filepath).fsPath)) {
+            const fsPath = vscode.Uri.parse(filepath).fsPath;
+            if (!fs.existsSync(fsPath) || minimatch(fsPath, this.excludePattern)) {
                 delete this.bookmarks[filepath];
                 return;
             }
@@ -426,7 +507,7 @@ const NodeType = {
 };
 
 
-class InlineBookmarksDataModel {
+class instructionsDataModel {
 
     /** treedata model */
 
@@ -436,11 +517,11 @@ class InlineBookmarksDataModel {
 
     getRoot() {  /** returns element */
         let fileBookmarks = Object.keys(this.controller.bookmarks);
-        
+
         if (settings.extensionConfig().view.showVisibleFilesOnly) {
 
             let visibleEditorUris;
-            if(settings.extensionConfig().view.showVisibleFilesOnlyMode === "onlyActiveEditor") {
+            if (settings.extensionConfig().view.showVisibleFilesOnlyMode === "onlyActiveEditor") {
                 visibleEditorUris = [vscode.window.activeTextEditor.document.uri.path];
             } else {
                 visibleEditorUris = vscode.window.visibleTextEditors.map(te => te.document.uri.path);
@@ -529,12 +610,12 @@ class InlineBookmarksDataModel {
 
 class InlineBookmarkTreeDataProvider {
 
-    constructor(inlineBookmarksController) {
+    constructor(instructionsController) {
         this._onDidChangeTreeData = new vscode.EventEmitter();
         this.onDidChangeTreeData = this._onDidChangeTreeData.event;
 
-        this.controller = inlineBookmarksController;
-        this.model = new InlineBookmarksDataModel(inlineBookmarksController);
+        this.controller = instructionsController;
+        this.model = new instructionsDataModel(instructionsController);
 
         this.filterTreeViewWords = [];
         this.gitIgnoreHandler = undefined;
@@ -544,7 +625,7 @@ class InlineBookmarkTreeDataProvider {
 
     /** methods */
 
-    getChildren(element) {  
+    getChildren(element) {
         return this._filterTreeView(element ? this.model.getChildren(element) : this.model.getRoot());
     }
 
@@ -557,14 +638,14 @@ class InlineBookmarkTreeDataProvider {
             return element; // undef
         }
         let item = new vscode.TreeItem(
-            this._formatLabel(element.label), 
+            this._formatLabel(element.label),
             element.type == NodeType.LOCATION ? 0 : settings.extensionConfig().view.expanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed
-            );
+        );
         item.id = element.type == NodeType.LOCATION ? this._getId(element.location) : this._getId(element.resource);
         item.resourceUri = element.resource;
         item.iconPath = element.iconPath;
         item.command = element.type == NodeType.LOCATION && element.location ? {
-            command: 'inlineBookmarks.jumpToRange',
+            command: 'instructions.jumpToRange',
             arguments: [element.location.uri, element.location.range],
             title: 'JumpTo'
         } : 0;
@@ -588,7 +669,7 @@ class InlineBookmarkTreeDataProvider {
 
     _filterTreeView(elements) {
 
-        if(this.gitIgnoreHandler && this.gitIgnoreHandler.filter){
+        if (this.gitIgnoreHandler && this.gitIgnoreHandler.filter) {
             elements = elements.filter(e => this.gitIgnoreHandler.filter(e.resource));
         }
 
@@ -615,7 +696,7 @@ class InlineBookmarkTreeDataProvider {
 
 
 module.exports = {
-    InlineBookmarksCtrl: InlineBookmarksCtrl,
+    instructionsCtrl: instructionsCtrl,
     InlineBookmarkTreeDataProvider: InlineBookmarkTreeDataProvider,
     NodeType: NodeType
 };

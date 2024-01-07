@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.0
+- changed the name to 'instructions'
+- updated to 0.2.0 because much added functionality
+- fix: was decorating files and adding to boomkmaks even if the file was in the exculded group
+- new: added a dump of the resulting instructions in .vscode/instrucitons.md
 
 ## 0.1.1
 - change of name to reflect the fork from the original project
