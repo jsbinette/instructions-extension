@@ -1,5 +1,9 @@
 # Change Log
 
+
+## 0.2.1
+- added the @summarize(parameters) bookmark that also adds a @end-summarize bookmark to the end of the section.  This can be used by a post processor to get a summary from chatGPT.
+
 ## 0.2.0
 - changed the name to 'instructions'
 - updated to 0.2.0 because much added functionality
