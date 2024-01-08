@@ -456,7 +456,7 @@ class instructionsCtrl {
                             let textBeforeTag = fileContents.substring(tag.tagLineStart, tag.tagStart)
                             let textAfterTag = fileContents.substring(tag.tagStart + tag.tag.length + 1, tagEnd)
                             if (tag.tag.indexOf('@summarize(') == 0) {
-                                textAfterTag = fileContents.substring(tag.tagStart, tagEnd) + '@end-summarize'
+                                textAfterTag = fileContents.substring(tag.tagStart, tagEnd) + '@end-summarize\n'
                             }
 
                             if (textAfterTag !== '' && tag.tag !== '@out') {
