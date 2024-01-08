@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.2.2
+- now reset also delete the .vscode/instructions.md file and the .vscode/bookmarks.json file
 
 ## 0.2.1
 - added the @summarize(parameters) bookmark that also adds a @end-summarize bookmark to the end of the section.  This can be used by a post processor to get a summary from chatGPT.

@@ -386,6 +386,10 @@ class instructionsCtrl {
     resetWorkspace() {
         if (!this._isWorkspaceAvailable()) return; //cannot save
         this.context.workspaceState.update("bookmarks.object", "{}");
+        let workspaceFolder = vscode.workspace.workspaceFolders  ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
+        fs.unlinkSync(workspaceFolder + '/.vscode/instructions.md')
+        fs.unlinkSync(workspaceFolder + '/.vscode/bookmarks.json')
+
     }
 
     async saveToWorkspace() {
