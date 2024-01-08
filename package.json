@@ -254,7 +254,7 @@
                 "instructions.default.words.green": {
                     "category": "trigger words",
                     "type": "string",
-                    "default": "@instr\\-header[\\s]",
+                    "default": "@instr\\-header[\\s],@summarize\\((.*?)\\)[\\s],@end-summarize",
                     "markdownDescription": "A comma-separated list of tags/trigger words (regex accepted) to highlight `green`."
                 },
                 "instructions.default.words.blue": {
