@@ -2,7 +2,7 @@
     "name": "instructions-extension",
     "displayName": "Instructions",
     "description": "Customizable Instructions Bookmarks",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "license": "GPLv3",
     "keywords": [
         "bookmark",
@@ -16,7 +16,7 @@
         "highlight"
     ],
     "publisher": "jsbinette",
-    "icon": "images/icon.png",
+    "icon": "images/Instructions Logo@4x.png",
     "engines": {
         "vscode": "^1.20.2"
     },
