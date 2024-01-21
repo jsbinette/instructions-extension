@@ -302,8 +302,12 @@ class instructionsCtrl {
         let defaultWords = {  // style: arr(regexWords)
             "blue": this._commaSeparatedStringToUniqueList(settings.extensionConfig().default.words.blue),
             "purple": this._commaSeparatedStringToUniqueList(settings.extensionConfig().default.words.purple),
+            "brown": this._commaSeparatedStringToUniqueList(settings.extensionConfig().default.words.brown),
+            "sky": this._commaSeparatedStringToUniqueList(settings.extensionConfig().default.words.sky),
+            "lime": this._commaSeparatedStringToUniqueList(settings.extensionConfig().default.words.lime),
             "green": this._commaSeparatedStringToUniqueList(settings.extensionConfig().default.words.green),
-            "red": this._commaSeparatedStringToUniqueList(settings.extensionConfig().default.words.red)
+            "red": this._commaSeparatedStringToUniqueList(settings.extensionConfig().default.words.red),
+            "yellow": this._commaSeparatedStringToUniqueList(settings.extensionConfig().default.words.yellow),
         };
 
         return { ...defaultWords, ...settings.extensionConfig().expert.custom.words.mapping };
@@ -338,12 +342,20 @@ class instructionsCtrl {
         const green = '#10a37f';
         const purple = '#C679E0';
         const red = '#F44336';
+        const brown = '#cc6d2e';
+        const sky = '#03A9F4';
+        const lime = '#CDDC39';
+        const yellow = '#cdb116';
         let styles = {
             "default": this._getDecorationDefaultStyle(blue),
             "red": this._getDecorationDefaultStyle(red),
             "blue": this._getDecorationDefaultStyle(blue),
             "green": this._getDecorationDefaultStyle(green),
-            "purple": this._getDecorationDefaultStyle(purple)
+            "purple": this._getDecorationDefaultStyle(purple),
+            "brown": this._getDecorationDefaultStyle(brown),
+            "sky": this._getDecorationDefaultStyle(sky),
+            "lime": this._getDecorationDefaultStyle(lime),
+            "yellow": this._getDecorationDefaultStyle(yellow)
         };
 
         let customStyles = settings.extensionConfig().expert.custom.styles;

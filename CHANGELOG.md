@@ -1,4 +1,7 @@
 # Change Log
+## 0.2.4
+- adde brown, sky and lime colors
+
 
 ## 0.2.2
 - now reset also delete the .vscode/instructions.md file and the .vscode/bookmarks.json file

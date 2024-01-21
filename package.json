@@ -2,12 +2,12 @@
     "name": "instructions-extension",
     "displayName": "Instructions",
     "description": "Customizable Instructions Bookmarks",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "license": "GPLv3",
     "keywords": [
         "bookmark",
         "bookmarks",
-        "tag",
+        "tag", 
         "instructions",
         "gpt",
         "mark",
@@ -31,18 +31,7 @@
         "url": "https://github.com/jsbinette/instructions-extension"
     },
     "activationEvents": [
-        "*",
-        "onView:instructionsExplorer",
-        "onCommand:instructions.jumpToRange",
-        "onCommand:instructions.refresh",
-        "onCommand:instructions.toggleShowVisibleFilesOnly",
-        "onCommand:instructions.toggleViewKeepFilesExpanded",
-        "onCommand:instructions.debug.state.reset",
-        "onCommand:instructions.showSelectBookmark",
-        "onCommand:instructions.showSelectVisibleBookmark",
-        "onCommand:instructions.listBookmarks",
-        "onCommand:instructions.listVisibleBookmarks",
-        "onCommand:instructions.scanWorkspace"
+        "onCommand:instructions.jumpToRange"
     ],
     "main": "./src/extension.js",
     "contributes": {
@@ -254,20 +243,44 @@
                 "instructions.default.words.green": {
                     "category": "trigger words",
                     "type": "string",
-                    "default": "@instr\\-header[\\s],@summarize\\((.*?)\\)[\\s],@end-summarize",
+                    "default": "@instr\\-header[\\s]",
                     "markdownDescription": "A comma-separated list of tags/trigger words (regex accepted) to highlight `green`."
                 },
                 "instructions.default.words.blue": {
                     "category": "trigger words",
                     "type": "string",
-                    "default": "@character[\\s]",
+                    "default": "@world[\\s]",
                     "markdownDescription": "A comma-separated list of tags/trigger words (regex accepted) to highlight `blue`."
                 },
                 "instructions.default.words.purple": {
                     "category": "trigger words",
                     "type": "string",
-                    "default": "@facts[\\s], @plot[\\s],@facts\\-summary[\\s], @plot\\[\\s]",
+                    "default": "@plot[\\s]",
                     "markdownDescription": "A comma-separated list of tags/trigger words (regex accepted) to highlight `purple`."
+                },
+                "instructions.default.words.brown": {
+                    "category": "trigger words",
+                    "type": "string",
+                    "default": "",
+                    "markdownDescription": "A comma-separated list of tags/trigger words (regex accepted) to highlight `brown`."
+                },
+                "instructions.default.words.sky": {
+                    "category": "trigger words",
+                    "type": "string",
+                    "default": "@character[\\s]",
+                    "markdownDescription": "A comma-separated list of tags/trigger words (regex accepted) to highlight `sky`."
+                },
+                "instructions.default.words.lime": {
+                    "category": "trigger words",
+                    "type": "string",
+                    "default": "@facts[\\s]",
+                    "markdownDescription": "A comma-separated list of tags/trigger words (regex accepted) to highlight `lime`."
+                },
+                "instructions.default.words.yellow": {
+                    "category": "trigger words",
+                    "type": "string",
+                    "default": "@summarize\\((.*?)\\)[\\s],@end-summarize",
+                    "markdownDescription": "A comma-separated list of tags/trigger words (regex accepted) to highlight `yellow`."
                 },
                 "instructions.exceptions.words.ignore": {
                     "category": "exceptions",
