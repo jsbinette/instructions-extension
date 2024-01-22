@@ -326,7 +326,7 @@ class instructionsCtrl {
 
     _getDecorationDefaultStyle(color) {
         return this._getDecorationStyle({
-            "gutterIconPath": this._getBookmarkDataUri(color), 
+            "gutterIconPath": this._getBookmarkDataUri(color),
             "overviewRulerColor": color + "B0",   // this is safe/suitable for the defaults only.  Custom ruler color is handled below.
             "light": {
                 "fontWeight": "bold"
@@ -398,7 +398,7 @@ class instructionsCtrl {
     resetWorkspace() {
         if (!this._isWorkspaceAvailable()) return; //cannot save
         this.context.workspaceState.update("bookmarks.object", "{}");
-        let workspaceFolder = vscode.workspace.workspaceFolders  ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
+        let workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
         fs.unlinkSync(workspaceFolder + '/.vscode/instructions.md')
         fs.unlinkSync(workspaceFolder + '/.vscode/bookmarks.json')
 
@@ -564,6 +564,47 @@ class instructionsDataModel {
     getChildren(element) {
         switch (element.type) {
             case NodeType.FILE:
+                function extractTextAfterLastAtWord(inputString) {
+                    //If it's a summarize; return the bookmark instead of the text
+                    const zeroedRegex = /^@summarize\([^)]*\)\s*/;
+                    const zeroedMatch = inputString.match(zeroedRegex);
+                    if (zeroedMatch) {
+                        return zeroedMatch[0].trim();  
+                    }
+                    // First regex to find the last '@' word and everything after it
+                    const firstRegex = /@[\w-]+[^@]*$/;
+                    const firstMatch = inputString.match(firstRegex);
+
+                    if (firstMatch) {
+                        let remainingText = firstMatch[0];
+                        let secondRegex;
+
+                        // Repeatedly check for '@summarize' or other '@' words
+                        while (true) {
+                            // Check for '@summarize' with content in parentheses
+                            if (remainingText.startsWith('@summarize(')) {
+                                secondRegex = /^@summarize\([^)]*\)\s*/;
+                            } else {
+                                // Check for other '@' words
+                                secondRegex = /^@[\w-]+\s+/;
+                            }
+
+                            const secondMatch = remainingText.match(secondRegex);
+
+                            if (secondMatch) {
+                                // Remove the matched part and continue processing the remaining text
+                                remainingText = remainingText.substring(secondMatch[0].length);
+                            } else {
+                                // No more '@' word patterns to process
+                                break;
+                            }
+                        }
+
+                        return remainingText.trim();
+                    }
+
+                    return '';
+                }
                 let bookmarks = Object.keys(this.controller.bookmarks[element.name]).map(cat => {
                     //all categories
                     return this.controller.bookmarks[element.name][cat].map(v => {
@@ -571,7 +612,7 @@ class instructionsDataModel {
                         return {
                             resource: element.resource,
                             location: location,
-                            label: v.text.trim(),
+                            label: extractTextAfterLastAtWord(v.text),
                             name: v.text.trim(),
                             type: NodeType.LOCATION,
                             category: cat,
