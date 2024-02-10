@@ -418,8 +418,10 @@ class instructionsCtrl {
             //temporary spot for this
             function transformBookmarks(bookmarks) {
                 let transformedData = {}
+                //JAN2024 for now order by file path
+                let sortedEntries = Object.entries(bookmarks).sort((a, b) => a[0].localeCompare(b[0]))
 
-                for (const [filePath, tags] of Object.entries(bookmarks)) {
+                for (const [filePath, tags] of sortedEntries) {
                     let fileData = []
                     for (const [tag, entries] of Object.entries(tags)) {
                         for (const entry of entries) {
@@ -451,7 +453,7 @@ class instructionsCtrl {
                         let firstTag = sortedTags[0]
                         firstTag.tagStart = fileContents.indexOf(firstTag.tag)
                         firstTag.tagLineStart = firstTag.tagStart - firstTag.startCharacter
-
+                        
                         for (let i = 0; i < sortedTags.length; i++) {
                             const tag = sortedTags[i]
                             let tagEnd
@@ -475,6 +477,10 @@ class instructionsCtrl {
                                 textAfterTag = fileContents.substring(tag.tagStart, tagEnd) + '@end-summarize\n'
                             }
 
+                            if (textAfterTag !== '' && tag.tag == '@out-file') {
+                                break //stop processing the file
+                            }
+
                             if (textAfterTag !== '' && tag.tag !== '@out') {
                                 output.push(textBeforeTag + textAfterTag)
                             }
@@ -486,7 +492,7 @@ class instructionsCtrl {
                 return output
             }
             let output = await processTags(transformBookmarks(this.bookmarks));
-            fs.writeFile(workspaceFolder + '/.vscode/instructions.md', output.join(''), (err) => {
+            fs.writeFile(workspaceFolder + '/.vscode/instructions.md', output.join('\n'), (err) => {
                 if (err) {
                     console.error(err);
                     return;

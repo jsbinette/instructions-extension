@@ -2,7 +2,7 @@
     "name": "instructions-extension",
     "displayName": "Instructions",
     "description": "Customizable Instructions Bookmarks",
-    "version": "0.2.4",
+    "version": "0.2.5",
     "license": "GPLv3",
     "keywords": [
         "bookmark",
@@ -237,7 +237,7 @@
                 "instructions.default.words.red": {
                     "category": "trigger words",
                     "type": "string",
-                    "default": "@out[\\s]",
+                    "default": "@out[\\s],@out-file[\\s]",
                     "markdownDescription": "A comma-separated list of tags/trigger words (regex accepted) to highlight `red`."
                 },
                 "instructions.default.words.green": {
