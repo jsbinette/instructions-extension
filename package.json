@@ -2,7 +2,7 @@
     "name": "instructions-extension",
     "displayName": "Instructions",
     "description": "Customizable Instructions Bookmarks",
-    "version": "0.2.5",
+    "version": "1.0.0",
     "license": "GPLv3",
     "keywords": [
         "bookmark",

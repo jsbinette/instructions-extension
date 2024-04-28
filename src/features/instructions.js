@@ -409,6 +409,10 @@ class instructionsCtrl {
         this.context.workspaceState.update("bookmarks.object", JSON.stringify(this.bookmarks));
         let workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
         if (workspaceFolder) {
+            //check if .vscode folder exists
+            if (!fs.existsSync(workspaceFolder + '/.vscode')) {
+                fs.mkdirSync(workspaceFolder + '/.vscode');
+            }
             fs.writeFile(workspaceFolder + '/.vscode/bookmarks.json', JSON.stringify(this.bookmarks), (err) => {
                 if (err) {
                     console.error(err);
