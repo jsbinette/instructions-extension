@@ -2,7 +2,7 @@
     "name": "instructions-extension",
     "displayName": "Instructions",
     "description": "Customizable Instructions Bookmarks",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "GPLv3",
     "keywords": [
         "bookmark",
@@ -332,6 +332,7 @@
                         "**/dist/**",
                         "**/build/**",
                         "**/.vscode/**",
+                        "**/.instructions/**",
                         "**/.github/**",
                         "**/_output/**",
                         "**/*.min.*",

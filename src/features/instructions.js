@@ -399,8 +399,8 @@ class instructionsCtrl {
         if (!this._isWorkspaceAvailable()) return; //cannot save
         this.context.workspaceState.update("bookmarks.object", "{}");
         let workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
-        fs.unlinkSync(workspaceFolder + '/.vscode/instructions.md')
-        fs.unlinkSync(workspaceFolder + '/.vscode/bookmarks.json')
+        fs.unlinkSync(workspaceFolder + '/.instructions/instructions.md')
+        fs.unlinkSync(workspaceFolder + '/.instructions/bookmarks.json')
 
     }
 
@@ -409,11 +409,11 @@ class instructionsCtrl {
         this.context.workspaceState.update("bookmarks.object", JSON.stringify(this.bookmarks));
         let workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
         if (workspaceFolder) {
-            //check if .vscode folder exists
-            if (!fs.existsSync(workspaceFolder + '/.vscode')) {
-                fs.mkdirSync(workspaceFolder + '/.vscode');
+            //check if .instructions folder exists
+            if (!fs.existsSync(workspaceFolder + '/.instructions')) {
+                fs.mkdirSync(workspaceFolder + '/.instructions');
             }
-            fs.writeFile(workspaceFolder + '/.vscode/bookmarks.json', JSON.stringify(this.bookmarks), (err) => {
+            fs.writeFile(workspaceFolder + '/.instructions/bookmarks.json', JSON.stringify(this.bookmarks), (err) => {
                 if (err) {
                     console.error(err);
                     return;
@@ -496,7 +496,7 @@ class instructionsCtrl {
                 return output
             }
             let output = await processTags(transformBookmarks(this.bookmarks));
-            fs.writeFile(workspaceFolder + '/.vscode/instructions.md', output.join('\n'), (err) => {
+            fs.writeFile(workspaceFolder + '/.instructions/instructions.md', output.join('\n'), (err) => {
                 if (err) {
                     console.error(err);
                     return;
